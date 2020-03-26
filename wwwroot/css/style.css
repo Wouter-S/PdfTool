@@ -1,0 +1,30 @@
+﻿.dropzone .dz-preview .dz-details {
+    padding: 5px !important;
+}
+
+.dz-preview {
+    width: 100% !important;
+    min-height: 40px !important;
+}
+
+.dz-image {
+    display: none !important;
+}
+
+.dz-size, .dz-filename {
+    float: left !important;
+}
+
+.file {
+    background-color: #dadada;
+    padding:5px;
+    margin:3px;
+    border-radius: 3px;
+}
+
+.test {
+    border: 1px solid;
+    border-radius: 5px;
+    margin: 4px;
+    padding: 10px;
+}

@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>PdfTool</title>
+    <meta http-equiv="refresh" content="3600" />
+
+    <meta name="mobile-web-app-capable" content="yes" />
+
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/bootstrap.min.css" />
+</head>
+
+<body>
+    <div class="container" id="app">
+        <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-10">
+                <vue-dropzone ref="myVueDropzone" id="dropzone" :options="dropzoneOptions" 
+                              @vdropzone-sending="HandleFileUploaded" @vdropzone-error="HandleError"></vue-dropzone>
+
+            </div>
+            <div class="col-md-1"></div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                &nbsp;
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+
+            </div>
+            <div class="col-md-2 text-center">
+                <input type="button" value="Combine" v-on:click="Combine()" />
+            </div>
+            <div class="col-md-2 text-center">
+                <input type="button" value="Split" v-on:click="SplitFiles()" />
+            </div>
+            <div class="col-md-4">
+
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                &nbsp;
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-1">
+            </div>
+            <div class="col-md-5 test">
+                Uploads
+                <div class="row " v-for="upload in uploads">
+                    <div class="col-md-11 file">
+                        {{upload.name}}
+                    </div>
+                </div>
+                <input type="button" value="Delete all" v-on:click="DeleteFiles('uploads')" />
+            </div>
+            <div class="col-md-5 test">
+                Processed
+                <div class="row" v-for="file in processed">
+                    <div class="col-md-12 file">
+                        <a target="_blank" v-bind:href="'/download/' + file.name">
+                            {{file.name}} <i class="fa fa-download" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                </div>
+                <input type="button" value="Delete all" v-on:click="DeleteFiles('processed')" />
+            </div>
+        </div>
+
+    </div>
+    <script src="https://use.fontawesome.com/5f97d0fa4c.js">
+    </script>
+
+    <script src="/dist/js/bundle.js">
+    </script>
+</body>
+
+</html>
