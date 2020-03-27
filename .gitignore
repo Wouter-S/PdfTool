@@ -3,3 +3,4 @@
 /bin
 /.vs
 /Properties/PublishProfiles/*.user
+/buildDocker.bat
