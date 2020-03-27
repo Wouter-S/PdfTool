@@ -4,4 +4,3 @@
 /.vs
 /Properties/PublishProfiles/*.user
 /buildDocker.bat
-/package-lock.json

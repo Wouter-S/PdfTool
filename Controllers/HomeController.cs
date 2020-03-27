@@ -14,16 +14,15 @@ namespace PfdTool.Controllers
 
     public class HomeController : Controller
     {
-     
+
         [Route("")]
         public IActionResult Index()
         {
             return File("~/index.html", "text/html");
-
         }
 
         [HttpPost]
-        [Route("/upload")]
+        [Route("upload")]
         public async Task<IActionResult> Upload(IFormFile file)
         {
             if (!file.ContentType.Equals("application/pdf", StringComparison.InvariantCultureIgnoreCase))
@@ -43,16 +42,16 @@ namespace PfdTool.Controllers
         }
 
         [HttpPost]
-        [Route("/combine")]
-        public async Task<IActionResult> Combine()
+        [Route("combine")]
+        public IActionResult Combine()
         {
             CombineDocs();
             return Ok();
         }
 
         [HttpPost]
-        [Route("/split")]
-        public async Task<IActionResult> Split()
+        [Route("split")]
+        public IActionResult Split()
         {
             var file = Directory.GetFiles(GetFilePath("")).First();
             FileInfo info = new FileInfo(file);
@@ -60,23 +59,22 @@ namespace PfdTool.Controllers
 
             System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
 
-
             for (int i = 0; i < doc.PageCount; i++)
             {
                 using (PdfDocument outPdf = new PdfDocument())
                 {
                     outPdf.AddPage(doc.Pages[i]);
-                    outPdf.Save(GetFilePath($"{info.Name}{ (i + 1).ToString("00") }.pdf","processed"));
+                    outPdf.Save(GetFilePath($"{info.Name}{ (i + 1).ToString("00") }.pdf", "processed"));
                     GetFilePath($"{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.pdf", "processed");
                 }
             }
-        
+
             return Ok();
         }
 
         [HttpGet]
-        [Route("/download/{fileName}")]
-        public async Task<IActionResult> Download(string fileName)
+        [Route("download/{fileName}")]
+        public IActionResult Download(string fileName)
         {
             var filePath = Path.Combine(Environment.CurrentDirectory, "processed", fileName);
             var stream = System.IO.File.OpenRead(filePath);
@@ -85,8 +83,8 @@ namespace PfdTool.Controllers
         }
 
         [HttpDelete]
-        [Route("/{option}")]
-        public async Task<IActionResult> Delete(DeleteOption option)
+        [Route("{option}")]
+        public IActionResult Delete(DeleteOption option)
         {
             var filePath = Path.Combine(Environment.CurrentDirectory, option.ToString());
             foreach (FileInfo file in new DirectoryInfo(filePath).GetFiles())
@@ -97,14 +95,15 @@ namespace PfdTool.Controllers
         }
 
         [HttpGet]
-        [Route("/files")]
-        public async Task<IActionResult> GetFiles()
+        [Route("files")]
+        [Route("home/files")]
+        public IActionResult GetFiles()
         {
             var uploads = GetFiles(GetFilePath(""));
             var processed = GetFiles(GetFilePath("", "processed"));
             return Json(new { uploads, processed });
         }
-        
+
         private dynamic GetFiles(string directory)
         {
             var files = Directory.GetFiles(directory);
@@ -114,17 +113,17 @@ namespace PfdTool.Controllers
                 s.Name,
                 s.CreationTime,
                 s.Length
-            });
+            }).OrderBy(s => s.Name);
             return fileInfos;
         }
         private void CombineDocs()
         {
             try
             {
-                var files = Directory.GetFiles(Path.Combine(Environment.CurrentDirectory, "uploads"));
+                var files = Directory.GetFiles(Path.Combine(Environment.CurrentDirectory, "uploads")).Select(f => new FileInfo(f));
                 List<PdfDocument> documents = new List<PdfDocument>();
 
-                foreach (string file in files)
+                foreach (string file in files.OrderBy(f => f.Name).Select(f => f.FullName))
                 {
                     documents.Add(PdfReader.Open(file, PdfDocumentOpenMode.Import));
                 }
@@ -140,7 +139,8 @@ namespace PfdTool.Controllers
 
                     outPdf.Save(GetFilePath($"{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.pdf", "processed"));
                 }
-            }catch (Exception e)
+            }
+            catch (Exception e)
             {
 
             }
@@ -154,6 +154,11 @@ namespace PfdTool.Controllers
         }
         private string GetFilePath(string fileName, string subDir = "uploads")
         {
+            if (!Directory.Exists(Path.Combine(Environment.CurrentDirectory, subDir)))
+            {
+                Directory.CreateDirectory(Path.Combine(Environment.CurrentDirectory, subDir));
+            }
+
             return Path.Combine(Environment.CurrentDirectory, subDir, fileName);
         }
 

@@ -24,11 +24,7 @@ namespace PfdTool
 
         public void ConfigureServices(IServiceCollection services)
         {
-            //Add framework services.
             services.AddMvc();
-
-            var serialSettings = Configuration.GetSection("SerialSettings");
-            services.Configure<SerialSettings>(serialSettings);
             services.AddScoped<IPdfService, PdfService>();
         }
 
