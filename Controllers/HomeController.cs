@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using System.IO;
 using PdfSharp.Pdf;
 using PdfSharp.Pdf.IO;
+using System.IO.Compression;
 
 namespace PfdTool.Controllers
 {
@@ -64,7 +65,7 @@ namespace PfdTool.Controllers
                 using (PdfDocument outPdf = new PdfDocument())
                 {
                     outPdf.AddPage(doc.Pages[i]);
-                    outPdf.Save(GetFilePath($"{info.Name}{ (i + 1).ToString("00") }.pdf", "processed"));
+                    outPdf.Save(GetFilePath($"{ (i + 1).ToString("00") }.pdf", "processed"));
                     GetFilePath($"{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.pdf", "processed");
                 }
             }
@@ -80,6 +81,37 @@ namespace PfdTool.Controllers
             var stream = System.IO.File.OpenRead(filePath);
 
             return File(stream, "application/pdf");
+        }
+
+        [HttpGet]
+        [Route("downloadall")]
+        public IActionResult DownloadAll()
+        {
+            string zipPath = string.Empty;
+            FileStream fileStream = null;
+            try
+            {
+                
+                var filePath = Path.Combine(Environment.CurrentDirectory, "processed");
+                zipPath = Path.Combine(Environment.CurrentDirectory, "zip", "processed.zip");
+
+                if (System.IO.File.Exists(zipPath))
+                {
+                    System.IO.File.Delete(zipPath);
+
+                }
+                ZipFile.CreateFromDirectory(filePath, zipPath);
+
+                fileStream = System.IO.File.OpenRead(zipPath);
+
+                return File(fileStream, "application/zip");
+
+            }
+            finally
+            {
+                //if (fileStream != null) { fileStream.Close(); }
+
+            }
         }
 
         [HttpDelete]

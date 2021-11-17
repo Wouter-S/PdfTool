@@ -1,16 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
-
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
 	<OutputType>Exe</OutputType>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    
-    <DockerTargetOS>Linux</DockerTargetOS>
-    <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
-    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-    <DockerfileContext>.</DockerfileContext>
   </PropertyGroup>
 
   <ItemGroup>
@@ -42,5 +33,4 @@
     <Folder Include="wwwroot\images\" />
     <Folder Include="wwwroot\js\Components\" />
   </ItemGroup>
-
 </Project>
